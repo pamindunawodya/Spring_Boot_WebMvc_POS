@@ -37,12 +37,30 @@ saveAjaxItemReq = (itemDataJson) => {
         },
         success: (resp) => {
             console.log(resp);
+            updateTableWithNewItem(resp);
         },
         error: (e) => {
             console.error(e); // Log the error to the console for more details.
         }
     });
 };
+
+function updateTableWithNewItem(newItemData) {
+    const tableBody = document.getElementById("tblItems").getElementsByTagName('tbody')[0];
+    const newRow = tableBody.insertRow();
+    const cell1 = newRow.insertCell(0);
+    const cell2 = newRow.insertCell(1);
+    const cell3 = newRow.insertCell(2);
+    const cell4 = newRow.insertCell(3);
+
+    cell1.innerHTML = newItemData.code;
+    cell2.innerHTML = newItemData.description;
+    cell3.innerHTML = newItemData.qty;
+    cell4.innerHTML = newItemData.price;
+
+
+}
+
 
 // Update Item Ajax JSON
 $('#btnItemUpdate').on('click', () => {

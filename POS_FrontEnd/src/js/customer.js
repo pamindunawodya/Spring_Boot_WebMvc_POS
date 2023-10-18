@@ -40,14 +40,21 @@ saveAjaxCustomerReq = (customerDataJSON) => {
             console.log(resp);
             // Call a function to update the table with the new customer data
             updateTableWithNewCustomer(resp);
+            alert(resp.message);
+
         },
         error: (e) => {
             console.error(e); // Log the error to the console for more details.
+            var jsObj=JSON.parse(e.responseText);
+            console.log(jsObj);
+            alert(jsObj.message);
+
         }
     });
 };
 
-function updateTableWithNewCustomer(newCustomerData) {
+function updateTableWithNewCustomer(resp) {
+    console.log(resp)
     const tableBody = document.getElementById("tblCustomer").getElementsByTagName('tbody')[0];
     const newRow = tableBody.insertRow();
     const cell1 = newRow.insertCell(0);
@@ -55,10 +62,10 @@ function updateTableWithNewCustomer(newCustomerData) {
     const cell3 = newRow.insertCell(2);
     const cell4 = newRow.insertCell(3);
 
-    cell1.innerHTML = newCustomerData.id;
-    cell2.innerHTML = newCustomerData.name;
-    cell3.innerHTML = newCustomerData.address;
-    cell4.innerHTML = newCustomerData.salary;
+    cell1.innerHTML = resp.data.id;
+    cell2.innerHTML = resp.data.name;
+    cell3.innerHTML = resp.data.address;
+    cell4.innerHTML = resp.data.salary;
 }
 
 // Update Customer Ajax JSON
@@ -109,25 +116,25 @@ updateAjaxCustomerReq = (customerDataUpdateJSON) => {
     });
 };
 
-// Update Table on Edit
-// function updateTableOnEdit(updatedCustomerData) {
-// //     const tableBody = document.getElementById("tblCustomer").getElementsByTagName('tbody')[0];
-// //     const rows = tableBody.getElementsByTagName("tr");
-// //
-// //     for (let i = 0; i < rows.length; i++) {
-// //         const row = rows[i];
-// //         const cell = row.getElementsByTagName("td")[0]; // Assuming the ID is in the first column
-// //
-// //         if (cell && cell.innerHTML === updatedCustomerData.toString()) {
-// //             // Update the row with the edited customer data
-// //             row.cells[0].innerHTML = updatedCustomerData.id;
-// //             row.cells[1].innerHTML = updatedCustomerData.name;
-// //             row.cells[2].innerHTML = updatedCustomerData.address;
-// //             row.cells[3].innerHTML = updatedCustomerData.salary;
-// //             break; // Exit the loop after updating the row
-// //         }
-// //     }
-// // }
+//Update Table on Edit
+//function updateTableOnEdit(updatedCustomerData) {
+//     const tableBody = document.getElementById("tblCustomer").getElementsByTagName('tbody')[0];
+//     const rows = tableBody.getElementsByTagName("tr");
+//
+//     for (let i = 0; i < rows.length; i++) {
+//         const row = rows[i];
+//         const cell = row.getElementsByTagName("td")[0]; // Assuming the ID is in the first column
+//
+//         if (cell && cell.innerHTML === updatedCustomerData.toString()) {
+//             // Update the row with the edited customer data
+//             row.cells[0].innerHTML = updatedCustomerData.id;
+//             row.cells[1].innerHTML = updatedCustomerData.name;
+//             row.cells[2].innerHTML = updatedCustomerData.address;
+//             row.cells[3].innerHTML = updatedCustomerData.salary;
+//             break; // Exit the loop after updating the row
+//         }
+//     }
+// }
 
 // Delete Customer Ajax JSON
 $('#btnCustomerDelete').on('click', () => {
@@ -137,31 +144,23 @@ $('#btnCustomerDelete').on('click', () => {
 });
 
 deleteCustomer = (customerId) => {
-    const customerDataDelete = {
-        id: customerId
-    };
-    const customerDataDeleteJSON = JSON.stringify(customerDataDelete);
-    console.log(customerDataDeleteJSON);
-    deleteAjaxCustomerReq(customerDataDeleteJSON);
+    deleteAjaxCustomerReq(customerId);
 };
 
-deleteAjaxCustomerReq= (customerDataDeleteJSON) => {
+deleteAjaxCustomerReq= (customerId) => {
     console.log("delete now");
     $.ajax({
-        url: "http://localhost:8080/Mapping/CustomerHandle",
-        type: "DELETE",
-        data: customerDataDeleteJSON,
-        dataType: "json",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        success: (resp) => {
+        url: "http://localhost:8080/Mapping/CustomerHandle?id="+customerId,
+        type: "DELETE",success: (resp) => {
+
             console.log(resp);
           updateTableOnDelete(resp.id);
             alert("Customer Delete Sucessfull");
         },
         error: (e) => {
-            console.error(e); // Log the error to the console for more details.
+            console.error(e.responseText); // Log the error to the console for more details.
+            var jsObj=JSON.parse(e.responseText);
+            alert(jsObj.message);
         }
     });
 };
